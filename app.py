@@ -1,6 +1,5 @@
 import pandas as pd
 from flask import Flask, request
-
 app = Flask(__name__)
 
 df = pd.read_csv("./static/events.csv", parse_dates=["timestamp"], index_col=["id"])
@@ -12,7 +11,10 @@ def runQuery():
     month = request.json['month']
     query = request.json['query']
 
-    return pd.eval(query).to_json()
+    try:
+        return pd.eval(query).to_json()
+    except Exception as error:
+        return str(error), 400
 
 
 if __name__ == '__main__':

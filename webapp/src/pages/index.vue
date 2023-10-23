@@ -55,6 +55,17 @@
             </div>
           </div>
 
+          <div class="mt-6 flex items-center justify-end gap-x-6">
+            <button type="submit"
+                    class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+              Run
+            </button>
+          </div>
+
+          <div v-if="error" class="text-red-500 font-bold">
+            {{ error }}
+          </div>
+
           <div v-if="queryResult" class="mt-8">
             <PandaTable :queryResult="queryResult"
             />
@@ -63,12 +74,6 @@
       </div>
     </div>
 
-    <div class="mt-6 flex items-center justify-end gap-x-6">
-      <button type="submit"
-              class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-        Run
-      </button>
-    </div>
   </form>
 </template>
 
@@ -83,14 +88,19 @@ const month = ref(4)
 const query = ref("df.head()")
 
 const queryResult = ref()
+const error = ref()
 
 const displayQueryResult = async () => {
-  queryResult.value = await runQuery({
+  error.value = null
+  queryResult.value = null
+
+  runQuery({
     year: year.value,
     month: month.value,
     query: query.value
   })
-  console.log(queryResult.value)
+      .then((r) => queryResult.value = r)
+      .catch((e) => error.value = e.response.data)
 }
 </script>
 
