@@ -3,11 +3,20 @@ import urllib.request
 from urllib.error import HTTPError
 
 import pandas as pd
+import psycopg2
 from flask import Flask, request
 
 app = Flask(__name__)
 
 dataframes = {}
+
+
+def getDbConnection():
+    conn = psycopg2.connect(host='localhost',
+                            database='madkudu',
+                            user="mgaudin",
+                            password=os.environ['DB_PASSWORD'])
+    return conn
 
 
 def getDataframe(year, month):
@@ -42,6 +51,58 @@ def runQuery():
         return pd.eval(query).to_json()
     except HTTPError:
         return "Requested Year/Month does not exist", 404
+    except Exception as error:
+        print(error)
+        return str(error), 400
+
+
+@app.route('/queries', methods=["GET"])
+def getAllQueries():
+    conn = getDbConnection()
+    cur = conn.cursor()
+    cur.execute('SELECT id, name, query FROM analyses;')
+    analyses = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return list(map(lambda a: {
+        "id": a[0],
+        "name": a[1],
+        "query": a[2]
+    }, analyses))
+
+
+@app.route('/queries', methods=["POST"])
+def saveQuery():
+    try:
+        name = request.json['name']
+        query = request.json['query']
+
+        conn = getDbConnection()
+        cur = conn.cursor()
+        cur.execute('INSERT INTO analyses (name, query)'
+                    'VALUES (%s, %s)',
+                    (name, query))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return "", 200
+    except Exception as error:
+        return str(error), 400
+
+
+@app.route('/queries/<id>', methods=["DELETE"])
+def deleteQuery(id):
+    try:
+        conn = getDbConnection()
+        cur = conn.cursor()
+        cur.execute('DELETE FROM analyses WHERE id = %s', (id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return "", 200
     except Exception as error:
         return str(error), 400
 

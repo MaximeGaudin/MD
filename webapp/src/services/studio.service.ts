@@ -9,3 +9,9 @@ type RunQueryRequest = {
 export const runQuery = async (request: RunQueryRequest) => {
     return (await axios.post(`/api/query`, request)).data
 }
+
+export enum DisplayMode {
+    TABLE,
+    JSON,
+    LIST,
+}

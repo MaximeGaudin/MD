@@ -36,7 +36,7 @@
                       <ul role="list" class="-mx-2 space-y-1">
                         <li v-for="item in navigation" :key="item.name">
                           <a :href="item.href"
-                             :class="[item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
+                             :class="[($route.name === item.href) ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
                             <component :is="item.icon" class="h-6 w-6 shrink-0" aria-hidden="true"/>
                             {{ item.name }}
                           </a>
@@ -66,7 +66,7 @@
               <ul role="list" class="-mx-2 space-y-1">
                 <li v-for="item in navigation" :key="item.name">
                   <a :href="item.href"
-                     :class="[item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
+                     :class="[($route.name === item.href)? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
                     <component :is="item.icon" class="h-6 w-6 shrink-0" aria-hidden="true"/>
                     {{ item.name }}
                   </a>
@@ -121,10 +121,11 @@ import {
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
 
+
 const navigation = [
-  {name: 'Studio', href: '#', icon: WrenchScrewdriverIcon, current: true},
-  {name: 'Analyses', href: '#', icon: PresentationChartLineIcon, current: false},
-  {name: 'Jobs', href: '#', icon: ClockIcon, current: false},
+  {name: 'Studio', href: '/', icon: WrenchScrewdriverIcon},
+  {name: 'Analyses', href: '/analyses', icon: PresentationChartLineIcon},
+  {name: 'Jobs', href: '#', icon: ClockIcon},
 ]
 
 const sidebarOpen = ref(false)
